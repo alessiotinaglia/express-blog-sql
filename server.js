@@ -1,37 +1,31 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import "./connection.js";
+import postsRouter from "./router/posts.js";
+import errorsHandler from "./middlewares/errorsHandler.js";
+import notFound from "./middlewares/notFound.js";
 
-const express = require("express");
+dotenv.config();
+
 const app = express();
-const PORT = 3000;
-const cors = require ("cors");
+const PORT = process.env.PORT || 3000;
+
+// Middleware
 app.use(cors());
-
-// global Middleware
-
-// per gestire il body JSON
 app.use(express.json());
-
-// immagini statiche
 app.use(express.static("public"));
 
+// Rotte principali
+app.get("/", (req, res) => {
+    res.send("Benvenuto nell'API del blog!");
+});
 
-// Importa il router da posts.js
-const postsRouter = require("./router/posts.js");
-
-// Importa da middlewares
-const errorsHandler = require("./middlewares/errorsHandler.js");
-// Importa da middlewares
-const notFound = require("./middlewares/notFound.js");
-
-// Rotte api
 app.use("/posts", postsRouter);
-
-// gestione degli errori (deve essere sempre la penultima)
 app.use(errorsHandler);
-
-//rotta fallback
 app.use(notFound);
 
-// In ascolto sulla porta 3000
+// Avvio del server
 app.listen(PORT, () => {
-  console.log(`Server in esecuzione su http://localhost:${PORT}`);
+    console.log(`Server in esecuzione su http://localhost:${PORT}`);
 });
